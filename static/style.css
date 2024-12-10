@@ -1,0 +1,14 @@
+.container{
+    display: flex;
+}
+
+.cont_child{
+    border: 1em black solid;
+}
+
+.box{
+    width: 600px;
+    height: 600px;
+    border: 1em brown solid;
+}
+
