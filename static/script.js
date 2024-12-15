@@ -1,19 +1,19 @@
-const inp_btn = document.querySelector("#inp_btn");
-const out_btn = document.querySelector("#out_btn");
-const inp_box = document.querySelector("#input_box");
-const out_box = document.querySelector("#output_box");
+const detect_btn = document.querySelector("#detect_btn");
+const stop_btn = document.querySelector("#stop_btn");
+const img = document.querySelector(".box");
+const on_detect = document.querySelector(".on-detect")
 
-inp_btn.addEventListener("click", ()=>{
+detect_btn.addEventListener("click", ()=>{
+    img.src = "http://127.0.0.1:8000/capture";
+    detect_btn.style.display = "none";
+    on_detect.style.display = "block";    
+})
 
-    // Stop the video if it's already playing a different stream
-    // if (inp_box.srcObject) {
-    //     const stream = inp_box.srcObject;
-    //     const tracks = stream.getTracks();
-    //     tracks.forEach(track => track.stop());
-    // }
-
-    // Fetch the MJPEG stream and set it as the source
-    inp_box.src = "http://127.0.0.1:8000/capture";
+stop_btn.addEventListener("click", ()=>{
+    const response = fetch("http://127.0.0.1:8000/stop_capture");
+    img.src = "";
+    on_detect.style.display = "none";
+    detect_btn.style.display = "block";
 });
 
 
