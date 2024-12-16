@@ -17,12 +17,11 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-isStreaming = False
-cap = None
+stream_active = True
 
 def generate():
-    global isStreaming, cap
-    while isStreaming:
+    global stream_active, cap
+    while stream_active:
         success, frame = cap.read()
 
         if not success:
@@ -40,9 +39,6 @@ def generate():
         frame = buffer.tobytes()
         yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-    cap.release()
-    cv2.destroyAllWindows()
-
 
 @app.get('/')
 def home():
@@ -50,21 +46,25 @@ def home():
 
 @app.get("/capture")
 def capture():
-    global isStreaming, cap
-    if cap is None or not cap.isOpened():
-        cap = cv2.VideoCapture(0)  # Reinitialize the camera
-        if not cap.isOpened():
-            print("Cannot open camera")
-            return {"error": "Cannot open camera"}
-    isStreaming = True
+    global stream_active, cap
+    stream_active = True
+    cap = cv2.VideoCapture(0)  # Reinitialize the camera
+    if not cap.isOpened():
+        print("Cannot open camera")
+        exit()
     return StreamingResponse(generate(), media_type="multipart/x-mixed-replace;boundary=frame")
 
-@app.get("/stop_capture")
+@app.post("/stop")
 def stop_capture():
-    global isStreaming
-    isStreaming = False
+    global stream_active, cap
+    stream_active = False
+    cap.release()
+    # generate(isStreaming=False)
     return {"st":"op"}
 
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
 
 
 
