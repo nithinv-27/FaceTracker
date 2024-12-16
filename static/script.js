@@ -9,9 +9,11 @@ detect_btn.addEventListener("click", ()=>{
     on_detect.style.display = "block";    
 })
 
-stop_btn.addEventListener("click", ()=>{
-    const response = fetch("http://127.0.0.1:8000/stop_capture");
+stop_btn.addEventListener("click", async ()=>{
     img.src = "";
+    const response = await fetch("http://127.0.0.1:8000/stop", {
+        method: "POST",
+    });
     on_detect.style.display = "none";
     detect_btn.style.display = "block";
 });
